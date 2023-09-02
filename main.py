@@ -1,0 +1,105 @@
+
+# No modificar
+from verify import verificar
+import preguntas as p
+from question import choose_q
+from print_preguntas import print_pregunta
+from level import choose_level
+from validador import validate
+import time
+import os
+import sys
+
+# valores iniciales - 
+n_pregunta = 0
+continuar = 'y'
+correcto = True
+p_level = 10
+op_sys = 'cls' if sys.platform == 'win32' else 'clear'
+
+
+# ----------------------------------------
+
+os.system(op_sys) # limpiar pantalla
+
+print('Bienvenido a la Trivia')
+opcion = input('''Ingrese una opción para Jugar!
+        1. Jugar
+        0. Salir
+        
+    > ''')
+# 1. validar opcion
+
+opcion = validate(['0', '1'], opcion)
+
+# 2. Definir el comportamiento de Salir
+if opcion == '0':
+    print('¡Nos vemos pronto!')
+    time.sleep(2)
+    os.system(op_sys)
+    # finalizar programa
+    exit () 
+
+print(f"Elección fue jugar ({opcion})")    
+
+# Funcionamiento de preguntas
+while correcto and n_pregunta < 3*p_level:
+    
+    if n_pregunta == 0:
+        p_level = input('¿Cuántas preguntas por nivel? (Máximo 3): ')
+      
+        # 3. Validar el número de preguntas por nivel
+        opciones= ['1','2','3']
+        p_level = validate (opciones, p_level)
+        
+        
+    if continuar == 'y':
+        #contador de preguntas
+        n_pregunta += 1
+
+        # 4. Escoger el nivel de la pregunta
+        p_level = int(p_level)
+        nivel = choose_level(n_pregunta, p_level)
+        print(f'\nPregunta {n_pregunta}:')
+        
+        # 5. Escoger el enunciado y las alternativas de una pregunta según el nivel escogido
+        enunciado, alternativas = choose_q(nivel)
+        
+        #6. Imprimir el enunciado y sus alternativas en pantalla
+        print_pregunta(enunciado , alternativas)
+        
+        respuesta = input('\nEscoja la alternativa correcta:\n> ').lower()
+
+        # 7. Validar la respuesta entregada
+        opc_alternativas = ['a','b','c','d']
+
+        respuesta = validate (opc_alternativas, respuesta)
+
+        # 8. Verificar si la respuesta es correcta o no
+        correcto = verificar (alternativas, respuesta)
+        
+        ##
+        if correcto and n_pregunta < 3*p_level:
+            print('Muy bien sigue así!\n')
+            continuar = input('Desea continuar? [y/n]: ').lower()
+
+            #9. Validar si es que se responde y o n
+            opc_continuar = ['y','n']
+            continuar2= validate(opc_continuar, continuar)
+            os.system(op_sys)
+
+        elif correcto and n_pregunta == 3*p_level:
+            print(f'\nFelicitaciones, Has respondido {3*p_level} preguntas correctas. \n Has ganado la Trivia \n Gracias por Jugar, hasta luego!!!')
+            time.sleep(3)
+            os.system(op_sys)
+
+        else: 
+            print(f'\nLo siento, conseguiste {n_pregunta - 1} respuestas correctas,\n Sigue participando!!')
+            time.sleep(3)
+            exit()
+    else: 
+        print('Nos vemos la proxima vez, sigue practicando')
+        time.sleep(3)
+        exit()
+            
+            
